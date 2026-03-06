@@ -7,85 +7,75 @@
 
 <style>
 body{
-    font-family: Arial, sans-serif;
-    background:#f2f2f2;
-    margin:0;
-    padding:15px;
+font-family:Arial;
+background:#f2f2f2;
+margin:0;
+padding:15px;
 }
 
 .container{
-    max-width:700px;
-    margin:auto;
-    background:white;
-    padding:15px;
-    border-radius:10px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+max-width:700px;
+margin:auto;
+background:white;
+padding:15px;
+border-radius:10px;
+box-shadow:0 4px 12px rgba(0,0,0,0.1);
 }
 
-h2{
-    text-align:center;
-    margin-bottom:5px;
-}
+h2{text-align:center;margin-bottom:5px;}
 
 .subtitle{
-    text-align:center;
-    font-size:12px;
-    margin-bottom:15px;
+text-align:center;
+font-size:12px;
+margin-bottom:15px;
 }
 
 .form-row{
-    display:flex;
-    flex-direction:column;
-    margin-bottom:10px;
-    font-size:13px;
+display:flex;
+flex-direction:column;
+margin-bottom:10px;
+font-size:13px;
 }
 
-input, select{
-    padding:6px;
-    font-size:13px;
-    border:1px solid #ccc;
-    border-radius:5px;
+input,select{
+padding:6px;
+font-size:13px;
+border:1px solid #ccc;
+border-radius:5px;
 }
 
 table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:12px;
+width:100%;
+border-collapse:collapse;
+font-size:12px;
 }
 
-th, td{
-    border:1px solid #ccc;
-    padding:6px;
-    text-align:left;
+th,td{
+border:1px solid #ccc;
+padding:6px;
 }
 
-th{
-    background:#eee;
-}
+th{background:#eee;}
 
-td.center{
-    text-align:center;
-}
-
-.progress-box{
-    margin-top:10px;
-    font-size:12px;
-    font-weight:bold;
-}
+.center{text-align:center;}
 
 button{
-    width:100%;
-    margin-top:12px;
-    padding:10px;
-    border:none;
-    border-radius:6px;
-    font-weight:bold;
-    background:black;
-    color:white;
+width:100%;
+margin-top:12px;
+padding:10px;
+border:none;
+border-radius:6px;
+font-weight:bold;
+background:black;
+color:white;
 }
 
-button.success{
-    background:green;
+button.success{background:green;}
+
+.progress{
+font-size:12px;
+font-weight:bold;
+margin-top:8px;
 }
 </style>
 </head>
@@ -95,29 +85,30 @@ button.success{
 <div class="container">
 
 <h2>FOH Daily Operation Form</h2>
-<div class="subtitle">Outlet Checklist System (Offline)</div>
+<div class="subtitle">Outlet Checklist System</div>
 
 <div class="form-row">
-<label>Date:</label>
-<input type="text" id="todayDate" readonly>
+<label>Date</label>
+<input id="todayDate" readonly>
 </div>
 
 <div class="form-row">
-<label>Staff Name:</label>
-<input type="text" id="staffName">
+<label>Staff Name</label>
+<input id="staffName">
 </div>
 
 <div class="form-row">
-<label>Role:</label>
-<select>
+<label>Role</label>
+<select id="role">
 <option>Server</option>
+<option>Bar</option>
 <option>Leader</option>
 <option>Supervisor</option>
 </select>
 </div>
 
 <div class="form-row">
-<label>Shift:</label>
+<label>Shift</label>
 <select id="shift">
 <option>Opening</option>
 <option>Closing</option>
@@ -128,15 +119,16 @@ button.success{
 <thead>
 <tr>
 <th style="width:5%">No</th>
-<th>Task Description</th>
+<th>Task</th>
 <th style="width:10%">✔</th>
 <th style="width:15%">Initial</th>
 </tr>
 </thead>
+
 <tbody id="checklistBody"></tbody>
 </table>
 
-<div class="progress-box">
+<div class="progress">
 Completion: <span id="progressText">0%</span>
 </div>
 
@@ -148,119 +140,167 @@ Submit Checklist
 
 <script>
 
-const openingTasks = [
-"Be ready for service (10:55)",
-"Set playlist and adjust volume",
-"Assign stations and verify readiness",
-"Set dining calendar",
+const serverOpening=[
+"Self grooming",
+"Check construction that needs maintenance",
+"Ensure facade area is clear",
+"Make sure menu is not damaged or torn",
+"Be ready for service",
+"Set playlist and outlet volume",
+"Assign stations",
 "Check condiments and supplies",
-"Update bar and kitchen stock",
-"Return plants to position",
+"Update kitchen & bar stock",
 "Clean glass doors",
-"Spray insect repellent",
-"Prepare indoor & outdoor areas",
+"Prepare dining area",
 "Sweep and mop area",
-"Wipe tables and align layout",
+"Wipe tables",
 "Polish cutlery",
-"Set plates and utensils",
-"Turn on POS system",
-"Turn on EDC machine",
+"Set plates & cutlery",
+"Turn on POS",
+"Turn on EDC",
 "Check paper rolls",
-"Turn on AC and lights",
-"Water plants",
-"Final readiness check"
+"Turn on AC & lights",
+"Water plants"
 ];
 
-const closingTasks = [
+const barOpening=[
+"Self grooming",
+"Set up bar area",
+"Set up bar mat",
+"Set up bar tools",
+"Check stock",
+"Update bar stock to server team",
+"Check all glasses (make sure no odor)",
+"Flush Purezza machine",
+"Prepare garnish",
+"Ensure bar area clean & hygienic",
+"Check chiller & freezer temperature",
+"Ready to serve"
+];
+
+const barClosing=[
+"Sweep bar area",
+"Mop bar area",
+"Restock bar items",
+"Wash bar mat",
+"Wash bar tools",
+"Wipe bar table",
+"Wipe chiller",
+"Wipe cabinet",
+"Clean ice box",
+"Soak pourer",
+"Daily inventory",
+"Return ice to freezer (if space available)",
+"Turn off Purezza machine"
+];
+
+const closingGeneral=[
 "Lock doors and secure keys",
-"Dispose trash and check area",
+"Dispose trash",
 "Clock out staff",
-"Store speaker and devices",
+"Store speaker & devices",
 "Spray insect repellent",
-"Charge EDC and iPad",
+"Charge EDC and devices",
 "Shut down POS",
 "Turn off AC and lights",
 "Reset table layout",
 "Refill condiments",
 "Prepare boxes for next day",
-"Sweep indoor area",
+"Sweep area",
 "Check stock supplies",
 "Submit purchase request",
 "Bring in chairs",
 "Close POS report",
 "Clear tables",
-"Soak cleaning cloths",
+"Soak cloths",
 "Polish cutlery",
 "Hang cloths to dry"
 ];
 
-const today = new Date().toISOString().split("T")[0];
-document.getElementById("todayDate").value = today;
+const today=new Date().toISOString().split("T")[0];
+document.getElementById("todayDate").value=today;
 
-function autoResetDaily(){
-const savedDate = localStorage.getItem("formDate");
-if(savedDate !== today){
-localStorage.clear();
-localStorage.setItem("formDate",today);
-}
+function getTasks(){
+
+const role=document.getElementById("role").value;
+const shift=document.getElementById("shift").value;
+
+if(role==="Bar" && shift==="Opening") return barOpening;
+if(role==="Bar" && shift==="Closing") return barClosing;
+
+if(role==="Server" && shift==="Opening") return serverOpening;
+
+return closingGeneral;
 }
 
 function loadChecklist(){
-const shift = document.getElementById("shift").value;
-const tasks = shift==="Opening"?openingTasks:closingTasks;
-const tbody = document.getElementById("checklistBody");
+
+const tasks=getTasks();
+const tbody=document.getElementById("checklistBody");
+
 tbody.innerHTML="";
 
 tasks.forEach((task,index)=>{
-const id = shift+"-"+index;
-const saved = localStorage.getItem(id);
 
-const row = document.createElement("tr");
+const id=index;
 
-row.innerHTML = `
+const row=document.createElement("tr");
+
+row.innerHTML=`
 <td class="center">${index+1}</td>
 <td>${task}</td>
 <td class="center">
-<input type="checkbox" ${saved==="true"?"checked":""} 
-onchange="saveCheck('${id}',this.checked)">
+<input type="checkbox" onchange="saveCheck(${id},this.checked)">
 </td>
-<td><input type="text" style="width:100%;font-size:11px;"></td>
+<td><input style="width:100%;font-size:11px;"></td>
 `;
 
 tbody.appendChild(row);
+
 });
 
-updateProgress(tasks.length,shift);
+updateProgress();
 }
 
 function saveCheck(id,value){
-localStorage.setItem(id,value);
-const shift = document.getElementById("shift").value;
-const total = shift==="Opening"?openingTasks.length:closingTasks.length;
-updateProgress(total,shift);
+
+localStorage.setItem("task"+id,value);
+
+updateProgress();
+
 }
 
-function updateProgress(total,shift){
-let completed=0;
-for(let i=0;i<total;i++){
-if(localStorage.getItem(shift+"-"+i)==="true") completed++;
-}
-const percent=Math.round((completed/total)*100);
+function updateProgress(){
+
+const tasks=getTasks();
+
+let complete=0;
+
+tasks.forEach((t,i)=>{
+if(localStorage.getItem("task"+i)==="true") complete++;
+});
+
+const percent=Math.round((complete/tasks.length)*100);
+
 document.getElementById("progressText").innerText=percent+"%";
+
 }
 
 function completeShift(){
+
 if(document.getElementById("progressText").innerText!=="100%"){
-alert("All tasks must be completed.");
+alert("Complete all tasks first");
 return;
 }
+
 document.getElementById("completeBtn").classList.add("success");
-document.getElementById("completeBtn").innerText="Checklist Submitted ✓";
+document.getElementById("completeBtn").innerText="Checklist Completed ✓";
+
 }
 
 document.getElementById("shift").addEventListener("change",loadChecklist);
+document.getElementById("role").addEventListener("change",loadChecklist);
 
-autoResetDaily();
 loadChecklist();
 
 </script>
